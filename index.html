@@ -2735,6 +2735,7 @@
           {
             label: "유튜브 썸네일",
             type: "model-gallery",
+            disableZoom: true,
             src: "gallery:thehari-thumbs",
             items: [
               { label: "피부노화 막는법", src: "./assets/thehari/thumb_01_skin.jpg" },
@@ -3461,10 +3462,14 @@
         });
 
         slides.forEach((slide) => {
-          slide.addEventListener("click", (e) => {
-            e.stopPropagation();
-            openZoomImageModal(slide.dataset.modelLabel || frame.label || "이미지 아카이브", slide.dataset.modelSrc);
-          });
+          if (frame.disableZoom) {
+            slide.style.cursor = "default";
+          } else {
+            slide.addEventListener("click", (e) => {
+              e.stopPropagation();
+              openZoomImageModal(slide.dataset.modelLabel || frame.label || "이미지 아카이브", slide.dataset.modelSrc);
+            });
+          }
         });
 
         goTo(0);
@@ -3508,10 +3513,7 @@
         root.addEventListener("click", (e) => e.stopPropagation());
 
         root.querySelectorAll(".aesthetic-thumb-card").forEach((card) => {
-          card.addEventListener("click", (e) => {
-            e.stopPropagation();
-            openZoomImageModal(card.dataset.thumbLabel || "더하리 에스테틱 썸네일", card.dataset.thumbSrc);
-          });
+          card.style.cursor = "default";
         });
       }
     }
