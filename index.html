@@ -1938,18 +1938,25 @@
     }
 
     .contact-panel {
-      padding: 40px 36px;
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(20px) saturate(165%);
-      -webkit-backdrop-filter: blur(20px) saturate(165%);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 12px 32px rgba(17, 17, 17, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-      text-align: center;
+      padding: 48px 44px;
+      border-radius: 26px;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(22px) saturate(175%);
+      -webkit-backdrop-filter: blur(22px) saturate(175%);
+      border: 1px solid rgba(255, 255, 255, 0.88);
+      box-shadow: 0 18px 48px rgba(17, 17, 17, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
+      gap: 36px;
+      align-items: center;
+      text-align: left;
+    }
+
+    .contact-left {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 18px;
+      align-items: flex-start;
+      gap: 14px;
     }
 
     [data-count-to] {
@@ -1957,18 +1964,90 @@
     }
 
     .contact-headline {
-      font-size: clamp(1.6rem, 2.8vw, 2.35rem);
+      font-size: clamp(1.55rem, 2.55vw, 2.2rem);
       font-weight: 700;
       letter-spacing: -0.03em;
-      line-height: 1.22;
+      line-height: 1.28;
+      color: var(--ink);
+      text-wrap: balance;
+    }
+
+    .contact-headline .accent-line {
+      color: var(--ink-accent);
+    }
+
+    .contact-sub {
+      font-size: 0.92rem;
+      color: var(--ink-secondary);
+      line-height: 1.7;
+      max-width: 520px;
+    }
+
+    .contact-card {
+      padding: 26px 26px 24px;
+      border-radius: 20px;
+      background: rgba(247, 247, 245, 0.82);
+      border: 1px solid var(--hairline);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .contact-card-head {
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .contact-card-name {
+      font-family: var(--font-display);
+      font-size: 1.06rem;
+      font-weight: 700;
       color: var(--ink);
     }
 
-    .contact-actions {
+    .contact-card-role {
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    .contact-info-list {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
       gap: 12px;
+    }
+
+    .contact-info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .contact-info-k {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      display: block;
+    }
+
+    .contact-info-v {
+      font-family: var(--font-display);
+      font-size: 0.94rem;
+      font-weight: 600;
+      color: var(--ink);
+      transition: color 0.2s ease;
+    }
+
+    .contact-info-v:hover {
+      color: var(--ink-accent);
+    }
+
+    .contact-cta-full {
+      width: 100%;
+      margin-top: 4px;
     }
 
     .footer-meta {
@@ -2157,6 +2236,7 @@
       .resume-metrics-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .timeline-row { grid-template-columns: 1fr; gap: 6px; padding: 16px 6px; }
       .resume-highlight-strip { grid-template-columns: 1fr; }
+      .contact-panel { grid-template-columns: 1fr; padding: 34px 28px; gap: 24px; }
       .hero-grid,
       .showroom-grid,
       .modal-body {
@@ -2561,21 +2641,49 @@
     <section class="zone" id="contact" aria-labelledby="contact-heading" data-chapter>
       <div class="container">
         <footer class="stagger-item">
-          <div class="contact-panel" style="margin-top:0;">
-            <span class="section-eyebrow" style="margin-bottom:0;">03 · CONTACT</span>
-            <h2 class="contact-headline" id="contact-heading" style="text-wrap:balance;">피아모리프팅의 다음 비주얼, 함께 만들어가고 싶습니다.</h2>
-            <p style="font-size:0.9rem; color:var(--ink-secondary); margin-top:-6px;">
-              문경동 · 3D·영상 &amp; 웹 실무 디렉터
-            </p>
+          <div class="contact-panel">
+            <div class="contact-left">
+              <span class="section-eyebrow" style="margin-bottom:0;">03 · CONTACT</span>
+              <h2 class="contact-headline" id="contact-heading">
+                기술력은 눈에 보일 때 설득력을 얻습니다.<br />
+                <span class="accent-line">피아모리프팅의 비주얼, 직접 완성하겠습니다.</span>
+              </h2>
+              <p class="contact-sub">
+                3D 시각화·영상 제작부터 홈페이지 수정·운영까지, 현장의 요청을 빠르게 결과물로 완성하는 실무자로 합류하겠습니다.
+              </p>
+            </div>
 
-            <div class="contact-actions">
-              <a href="mailto:sgstarceo@gmail.com" class="glass-btn-dark">
-                <span>sgstarceo@gmail.com</span>
+            <div class="contact-card">
+              <div class="contact-card-head">
+                <div class="contact-card-name">문경동 · Moon Kyoung Dong</div>
+                <div class="contact-card-role">3D·영상 &amp; 웹 실무 디렉터</div>
+              </div>
+
+              <div class="contact-info-list">
+                <div class="contact-info-row">
+                  <div>
+                    <span class="contact-info-k">EMAIL</span>
+                    <a href="mailto:sgstarceo@gmail.com" class="contact-info-v">sgstarceo@gmail.com</a>
+                  </div>
+                  <button type="button" class="hud-mini-btn" data-copy-email="sgstarceo@gmail.com">COPY</button>
+                </div>
+
+                <div class="contact-info-row">
+                  <div>
+                    <span class="contact-info-k">MOBILE</span>
+                    <a href="tel:010-4389-1190" class="contact-info-v">010-4389-1190</a>
+                  </div>
+                  <a href="tel:010-4389-1190" class="hud-mini-btn">CALL</a>
+                </div>
+              </div>
+
+              <a
+                href="mailto:sgstarceo@gmail.com?subject=%5B%ED%94%BC%EC%95%84%EB%AA%A8%EB%A6%AC%ED%94%84%ED%8C%85%5D%20%EB%A9%B4%EC%A0%91%20%EC%A0%9C%EC%95%88%20%EB%B0%8F%20%EB%AC%B8%EC%9D%98"
+                class="glass-btn-dark contact-cta-full"
+              >
+                <span>메일로 면접 제안 보내기</span>
+                <span>↗</span>
               </a>
-
-              <button type="button" class="glass-btn-pastel" data-copy-email="sgstarceo@gmail.com">
-                <span>COPY EMAIL</span>
-              </button>
             </div>
           </div>
 
