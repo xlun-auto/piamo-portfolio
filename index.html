@@ -556,7 +556,7 @@
 
     .zone {
       position: relative;
-      padding: 108px 0;
+      padding: 176px 0;
     }
 
     .zone-divider {
@@ -895,6 +895,7 @@
       position: relative;
       height: 360vh;
       width: 100%;
+      margin: 88px 0 128px;
       z-index: 3;
     }
 
@@ -906,20 +907,20 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding-top: calc(var(--nav-h) + 18px);
-      padding-bottom: 28px;
+      padding-top: calc(var(--nav-h) + 14px);
+      padding-bottom: 24px;
     }
 
     .showcase-inner {
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 1420px;
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 0 40px;
+      padding: 0 36px;
       display: flex;
       flex-direction: column;
-      gap: 22px;
+      gap: 16px;
     }
 
     .showroom-top {
@@ -935,6 +936,11 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 8px;
+    }
+
+    .showroom-quick-tabs .glass-pill-tab {
+      padding: 9px 17px;
+      font-size: 0.78rem;
     }
 
     .track-progress-bar {
@@ -954,10 +960,8 @@
     }
 
     .showroom-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.32fr) minmax(0, 0.68fr);
-      gap: 32px;
-      align-items: stretch;
+      display: block;
+      width: 100%;
     }
 
     .stage-slide {
@@ -1487,11 +1491,13 @@
 
     .stage-viewport {
       position: relative;
-      aspect-ratio: 16 / 10;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      max-height: 55vh;
       border-radius: 16px;
       background: var(--surface-warm);
       overflow: hidden;
-      cursor: pointer;
+      cursor: default;
     }
 
     .stage-media-layer {
@@ -1589,10 +1595,17 @@
     }
 
     .stage-caption {
-      padding: 20px 24px 24px;
+      padding: 16px 24px 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+      gap: 18px 26px;
+      align-items: start;
+    }
+
+    .stage-caption-main {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .stage-title {
@@ -2107,8 +2120,10 @@
        ========================================================================== */
     @media (max-width: 1040px) {
       .scroll-rail { display: none; }
-      .showcase-track { height: auto; padding: 0; }
-      .showcase-sticky-stage { position: relative; height: auto; padding: 72px 0; }
+      .showcase-track { height: auto; margin: 48px 0 72px; padding: 0; }
+      .showcase-sticky-stage { position: relative; height: auto; padding: 56px 0; }
+      .stage-viewport { max-height: none; }
+      .stage-caption { grid-template-columns: 1fr; }
       .hero-grid,
       .showroom-grid,
       .career-grid,
@@ -2121,7 +2136,7 @@
       .container, .showcase-inner { padding: 0 20px; }
       .nav-links, .nav-sync-pill, .nav-right .glass-btn-light { display: none; }
       .mobile-btn { display: inline-flex; }
-      .zone { padding: 74px 0; }
+      .zone { padding: 104px 0; }
       .hero-zone { padding: calc(var(--nav-h) + 28px) 0 64px; }
       .resume-cap-grid { grid-template-columns: 1fr; }
       .ledger-item { grid-template-columns: 1fr; gap: 6px; }
@@ -2298,7 +2313,7 @@
           </div>
 
           <div class="showroom-grid">
-            <!-- Left: Crossfading & Scaling Pinned Preview Stage -->
+            <!-- Full-Wide Cinema Preview Stage -->
             <div class="stage-card stagger-item">
               <div class="stage-frame-wrap">
                 <div class="stage-viewport" id="stageViewport">
@@ -2311,19 +2326,18 @@
                 <div class="stage-subframes" id="stageSubframes"></div>
               </div>
 
-              <div class="stage-caption" style="padding:16px 22px 20px; gap:8px;">
-                <h3 class="stage-title" id="stageTitle" style="font-size:1.22rem;"></h3>
-                <p class="stage-summary" id="stageSummary" style="font-size:0.86rem;"></p>
-                <ul class="stage-bullets" id="stageBullets"></ul>
-                <div class="stage-footer" style="padding-top:4px;">
-                  <div class="tag-row" id="stageTools"></div>
-                  <div id="stageExtLinks" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+              <div class="stage-caption">
+                <div class="stage-caption-main">
+                  <h3 class="stage-title" id="stageTitle" style="font-size:1.24rem;"></h3>
+                  <p class="stage-summary" id="stageSummary" style="font-size:0.86rem;"></p>
+                  <div class="stage-footer" style="padding-top:4px;">
+                    <div class="tag-row" id="stageTools"></div>
+                    <div id="stageExtLinks" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+                  </div>
                 </div>
+                <ul class="stage-bullets" id="stageBullets"></ul>
               </div>
             </div>
-
-            <!-- Right: 4-Step Interactive Case Selector Cards (01~04) -->
-            <div class="showroom-list" id="showroomList"></div>
           </div>
         </div>
       </div>
@@ -3597,40 +3611,12 @@
         }
       });
 
-      showroomListEl.innerHTML = SHOWROOM_DATA.map(
-        (item, idx) => `
-          <article class="showroom-item stagger-item ${idx === 0 ? "active" : ""}" data-case-idx="${idx}" tabindex="0">
-            <div class="item-top-row">
-              <span class="item-idx">${item.index}</span>
-              ${item.conceptBadge ? `<span class="item-concept-mini">가상 컨셉 시안</span>` : ""}
-            </div>
-            <h3 class="item-title" style="font-size:1.02rem;">${item.title}</h3>
-            <p class="item-desc" style="font-size:0.81rem; line-height:1.5;">${item.summary}</p>
-            <div class="item-bottom" style="padding-top:6px;">
-              <div class="tag-row">
-                ${item.tools.slice(0, 2).map((t) => `<span class="tag-chip">${t}</span>`).join("")}
-              </div>
-            </div>
-          </article>
-        `
-      ).join("");
+      if (showroomListEl) {
+        showroomListEl.innerHTML = "";
+      }
 
       showroomTabsEl.querySelectorAll("[data-tab-idx]").forEach((btn) => {
         btn.addEventListener("click", () => scrollToShowcaseZone(Number(btn.dataset.tabIdx)));
-      });
-
-      showroomListEl.querySelectorAll(".showroom-item").forEach((card) => {
-        const idx = Number(card.dataset.caseIdx);
-        card.addEventListener("click", (e) => {
-          if (e.target.closest("[data-open-modal]")) return;
-          scrollToShowcaseZone(idx);
-        });
-        card.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            scrollToShowcaseZone(idx);
-          }
-        });
       });
 
       selectShowroomCase(0, 0);
@@ -3644,9 +3630,11 @@
       showroomTabsEl.querySelectorAll("[data-tab-idx]").forEach((b) => {
         b.classList.toggle("active", Number(b.dataset.tabIdx) === caseIdx);
       });
-      showroomListEl.querySelectorAll(".showroom-item").forEach((c) => {
-        c.classList.toggle("active", Number(c.dataset.caseIdx) === caseIdx);
-      });
+      if (showroomListEl) {
+        showroomListEl.querySelectorAll(".showroom-item").forEach((c) => {
+          c.classList.toggle("active", Number(c.dataset.caseIdx) === caseIdx);
+        });
+      }
 
       stageSlidesMount.querySelectorAll(".stage-slide").forEach((slide) => {
         const sIdx = Number(slide.dataset.slideIdx);
