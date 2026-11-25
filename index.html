@@ -1608,6 +1608,37 @@
       line-height: 1.65;
     }
 
+    .stage-bullets {
+      list-style: none;
+      display: grid;
+      gap: 6px;
+      margin: 4px 0 2px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(17, 17, 17, 0.025);
+      border: 1px solid var(--hairline);
+    }
+
+    .stage-bullets li {
+      position: relative;
+      padding-left: 14px;
+      font-size: 0.79rem;
+      line-height: 1.55;
+      color: var(--ink-secondary);
+    }
+
+    .stage-bullets li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.56em;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--grad-mint-lime);
+      border: 1px solid rgba(30, 58, 52, 0.25);
+    }
+
     .stage-footer {
       display: flex;
       flex-wrap: wrap;
@@ -2278,14 +2309,12 @@
 
               <div class="stage-toolbar">
                 <div class="stage-subframes" id="stageSubframes"></div>
-                <button type="button" class="glass-btn-dark" style="padding:7px 15px; font-size:0.73rem;" id="stageOpenModalBtn">
-                  VIEW DETAIL ↗
-                </button>
               </div>
 
               <div class="stage-caption" style="padding:16px 22px 20px; gap:8px;">
                 <h3 class="stage-title" id="stageTitle" style="font-size:1.22rem;"></h3>
                 <p class="stage-summary" id="stageSummary" style="font-size:0.86rem;"></p>
+                <ul class="stage-bullets" id="stageBullets"></ul>
                 <div class="stage-footer" style="padding-top:4px;">
                   <div class="tag-row" id="stageTools"></div>
                   <div id="stageExtLinks" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
@@ -3519,9 +3548,9 @@
     const stageSubframes = document.getElementById("stageSubframes");
     const stageTitle = document.getElementById("stageTitle");
     const stageSummary = document.getElementById("stageSummary");
+    const stageBullets = document.getElementById("stageBullets");
     const stageTools = document.getElementById("stageTools");
     const stageExtLinks = document.getElementById("stageExtLinks");
-    const stageOpenModalBtn = document.getElementById("stageOpenModalBtn");
     const showcaseTrack = document.getElementById("showroom");
     const trackProgressFill = document.getElementById("trackProgressFill");
 
@@ -3579,9 +3608,6 @@
               <div class="tag-row">
                 ${item.tools.slice(0, 2).map((t) => `<span class="tag-chip">${t}</span>`).join("")}
               </div>
-              <button type="button" class="glass-btn-light" style="padding:5px 11px; font-size:0.7rem;" data-open-modal="${item.id}">
-                VIEW CASE ↗
-              </button>
             </div>
           </article>
         `
@@ -3671,6 +3697,9 @@
 
       stageTitle.textContent = item.title;
       stageSummary.textContent = item.summary;
+      if (stageBullets) {
+        stageBullets.innerHTML = (item.bullets || []).map((b) => `<li>${b}</li>`).join("");
+      }
       stageTools.innerHTML = item.tools.map((t) => `<span class="tag-chip">${t}</span>`).join("");
       stageExtLinks.innerHTML = item.links
         .map(
@@ -3681,9 +3710,6 @@
           `
         )
         .join("");
-
-      stageOpenModalBtn.dataset.openModal = item.id;
-      stageViewport.dataset.openModal = item.id;
     }
 
     buildShowroomUI();
@@ -3818,10 +3844,6 @@
       document.body.classList.add("modal-open");
     }
 
-    document.addEventListener("click", (e) => {
-      const trigger = e.target.closest("[data-open-modal]");
-      if (trigger) openDetailModal(trigger.dataset.openModal);
-    });
     modalCloseBtn.addEventListener("click", closeDetailModal);
     detailModal.addEventListener("click", (e) => {
       if (e.target === detailModal) closeDetailModal();
