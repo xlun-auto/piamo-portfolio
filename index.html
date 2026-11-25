@@ -1164,6 +1164,57 @@
       cursor: pointer;
     }
 
+    .vp-sound-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .vp-mute-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 24px;
+      padding: 0;
+    }
+
+    .vp-mute-btn svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
+    .vp-vol-range {
+      width: 52px;
+      height: 4px;
+      accent-color: #1E3A34;
+      cursor: pointer;
+    }
+
+    .vp-track-badge {
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      font-weight: 600;
+      color: #1E3A34;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(134, 227, 206, 0.28);
+      border: 1px solid rgba(30, 58, 52, 0.14);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 720px) {
+      .vp-vol-range {
+        width: 38px;
+      }
+      .viewer-hud-bar {
+        gap: 6px;
+        padding: 7px 10px;
+      }
+    }
+
     /* 3D Modeling Archive Auto-Scrolling Single-Image Carousel */
     .modeling-carousel {
       position: relative;
@@ -1273,16 +1324,44 @@
       left: 8px;
       right: 8px;
       bottom: 8px;
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 7px 9px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow: 0 6px 18px rgba(17, 17, 17, 0.16);
+    }
+
+    .aesthetic-reel-hud-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-      padding: 5px 8px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.84);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
+      width: 100%;
+    }
+
+    .aesthetic-reel-hud .hud-mini-btn {
+      font-size: 0.64rem;
+      padding: 3px 7px;
+    }
+
+    .aesthetic-reel-hud .vp-mute-btn {
+      width: 24px;
+      height: 22px;
+      padding: 0;
+    }
+
+    .aesthetic-reel-hud .vp-vol-range {
+      width: 36px;
+    }
+
+    .aesthetic-reel-hud .hud-readout {
+      font-size: 0.62rem;
     }
 
     .aesthetic-thumbs-col {
@@ -2685,16 +2764,44 @@
       `;
     }
 
+    const SILENT_VIDEO_FILES = new Set(["volvo_proposal.mp4"]);
+
+    function videoHasAudio(src) {
+      if (!src) return false;
+      const clean = String(src).split("?")[0].split("#")[0];
+      const file = clean.split("/").pop().toLowerCase();
+      return !SILENT_VIDEO_FILES.has(file);
+    }
+
+    const SVG_SOUND_OFF = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
+    const SVG_SOUND_ON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`;
+
     function renderVideoPlayerHTML(frame) {
-      const posterAttr = frame.poster ? ` poster="${frame.poster}"` : "";
+      const isPlaylist = frame.type === "playlist" && frame.playlist && frame.playlist.length > 0;
+      const src = isPlaylist ? frame.playlist[0].src : frame.src;
+      const poster = isPlaylist ? (frame.playlist[0].poster || frame.poster || "") : (frame.poster || "");
+      const posterAttr = poster ? ` poster="${poster}"` : "";
+      const loopAttr = isPlaylist ? "" : " loop";
+      const hasAudio = isPlaylist ? frame.playlist.some((c) => videoHasAudio(c.src)) : videoHasAudio(src);
+      const trackBadge = isPlaylist ? `<span class="vp-track-badge" data-vp-track>01 / ${String(frame.playlist.length).padStart(2, "0")}</span>` : "";
+      const soundControls = hasAudio
+        ? `
+            <span class="vp-sound-wrap" data-vp-sound-wrap>
+              <button type="button" class="hud-mini-btn vp-mute-btn" data-vp-mute aria-label="소리 켜기/끄기" title="소리 켜기/끄기">${SVG_SOUND_OFF}</button>
+              <input type="range" class="vp-vol-range" data-vp-vol min="0" max="1" step="0.05" value="0" aria-label="볼륨 조절" />
+            </span>
+          `
+        : "";
       return `
         <div class="video-player-viewer" data-video-player="true">
-          <video src="${frame.src}"${posterAttr} autoplay loop muted playsinline></video>
+          <video src="${src}"${posterAttr} autoplay${loopAttr} muted playsinline></video>
           <div class="viewer-hud-bar" data-hud="true">
             <button type="button" class="hud-mini-btn" data-vp-toggle aria-label="재생/일시정지">PAUSE</button>
             <button type="button" class="hud-mini-btn" data-vp-restart aria-label="처음부터 다시 보기">↺ 처음</button>
+            ${trackBadge}
             <input type="range" class="seq-range" data-vp-seek min="0" max="1000" value="0" aria-label="영상 재생 위치" />
             <span class="hud-readout" data-vp-time>00:00 / 00:00</span>
+            ${soundControls}
           </div>
         </div>
       `;
@@ -2730,13 +2837,33 @@
       const firstClip = frame.playlist && frame.playlist[0] ? frame.playlist[0] : { src: "", label: "숏폼 01" };
       const thumbs = frame.thumbs || [];
       const doubled = [...thumbs, ...thumbs];
+      const hasAudio = (frame.playlist || []).some((c) => videoHasAudio(c.src));
+      const soundControls = hasAudio
+        ? `
+            <span class="vp-sound-wrap" data-vp-sound-wrap>
+              <button type="button" class="hud-mini-btn vp-mute-btn" data-vp-mute aria-label="소리 켜기/끄기" title="소리 켜기/끄기">${SVG_SOUND_OFF}</button>
+              <input type="range" class="vp-vol-range" data-vp-vol min="0" max="1" step="0.05" value="0" aria-label="볼륨 조절" />
+            </span>
+          `
+        : "";
       return `
         <div class="aesthetic-showcase" data-aesthetic-showcase="true">
-          <div class="aesthetic-reel-col">
+          <div class="aesthetic-reel-col" data-video-player="true">
             <video src="${firstClip.src}" autoplay muted playsinline></video>
             <div class="aesthetic-reel-hud" data-hud="true">
-              <span class="hud-readout" data-reel-label>SHORTS 01 / 02</span>
-              <button type="button" class="hud-mini-btn" data-reel-next>다음 영상 ↻</button>
+              <div class="aesthetic-reel-hud-row">
+                <span style="display:inline-flex;align-items:center;gap:4px;">
+                  <button type="button" class="hud-mini-btn" data-vp-toggle aria-label="재생/일시정지">PAUSE</button>
+                  <button type="button" class="hud-mini-btn" data-vp-restart aria-label="처음부터 다시 보기">↺</button>
+                </span>
+                <span class="hud-readout" data-reel-label>SHORTS 01 / 02</span>
+                <button type="button" class="hud-mini-btn" data-reel-next>다음 ↻</button>
+              </div>
+              <div class="aesthetic-reel-hud-row">
+                <input type="range" class="seq-range" data-vp-seek min="0" max="1000" value="0" aria-label="영상 재생 위치" />
+                <span class="hud-readout" data-vp-time>00:00</span>
+                ${soundControls}
+              </div>
             </div>
           </div>
           <div class="aesthetic-thumbs-col">
@@ -2766,7 +2893,7 @@
       if (frame.type === "zoom") {
         return renderZoomHTML(frame.src, alt);
       }
-      if (frame.type === "video-player") {
+      if (frame.type === "video-player" || frame.type === "playlist" || frame.type === "video" || /\.mp4($|\?)/i.test(frame.src || "")) {
         return renderVideoPlayerHTML(frame);
       }
       if (frame.type === "model-gallery" && frame.items) {
@@ -2780,67 +2907,84 @@
 
     const SEQ_PRELOAD_CACHE = new Map();
 
-    function bindInteractiveFrame(container, frame) {
-      if (!container || !frame) return;
+    function bindVideoHudControls(root, vid, opts = {}) {
+      if (!root || !vid) return;
+      const toggleBtn = root.querySelector("[data-vp-toggle]");
+      const restartBtn = root.querySelector("[data-vp-restart]");
+      const seekRange = root.querySelector("[data-vp-seek]");
+      const timeEl = root.querySelector("[data-vp-time]");
+      const muteBtn = root.querySelector("[data-vp-mute]");
+      const volRange = root.querySelector("[data-vp-vol]");
+      const soundWrap = root.querySelector("[data-vp-sound-wrap]");
+      const compactTime = Boolean(opts.compactTime);
+      let isSeeking = false;
+      let lastVolume = 0.8;
 
-      if (frame.type === "playlist" && frame.playlist) {
-        const vid = container.querySelector("video");
-        if (vid) {
-          vid.style.transition = "opacity 0.35s ease";
-          bindSequentialPlaylist(vid, frame.playlist);
+      vid.muted = true;
+      vid.volume = lastVolume;
+
+      const fmtTime = (sec) => {
+        if (!Number.isFinite(sec) || sec < 0) return "00:00";
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+      };
+
+      const syncSoundUI = () => {
+        if (soundWrap) {
+          const curSrc = vid.currentSrc || vid.getAttribute("src") || "";
+          soundWrap.style.display = videoHasAudio(curSrc) ? "inline-flex" : "none";
         }
-        return;
-      }
+        const isMuted = vid.muted || vid.volume === 0;
+        if (muteBtn) {
+          muteBtn.innerHTML = isMuted ? SVG_SOUND_OFF : SVG_SOUND_ON;
+          muteBtn.setAttribute("aria-label", isMuted ? "소리 켜기" : "소리 끄기");
+        }
+        if (volRange) {
+          volRange.value = isMuted ? "0" : String(Number(vid.volume.toFixed(2)));
+        }
+      };
 
-      if (frame.type === "video-player") {
-        const root = container.querySelector("[data-video-player]");
-        if (!root) return;
-        const vid = root.querySelector("video");
-        const toggleBtn = root.querySelector("[data-vp-toggle]");
-        const restartBtn = root.querySelector("[data-vp-restart]");
-        const seekRange = root.querySelector("[data-vp-seek]");
-        const timeEl = root.querySelector("[data-vp-time]");
-        let isSeeking = false;
-
-        const fmtTime = (sec) => {
-          if (!Number.isFinite(sec) || sec < 0) return "00:00";
-          const m = Math.floor(sec / 60);
-          const s = Math.floor(sec % 60);
-          return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-        };
-
-        const syncUI = () => {
-          const dur = Number.isFinite(vid.duration) && vid.duration > 0 ? vid.duration : 0;
-          const cur = Number.isFinite(vid.currentTime) ? vid.currentTime : 0;
-          if (!isSeeking && dur > 0) {
-            seekRange.value = String(Math.round((cur / dur) * 1000));
-          }
-          timeEl.textContent = `${fmtTime(cur)} / ${fmtTime(dur)}`;
+      const syncUI = () => {
+        const dur = Number.isFinite(vid.duration) && vid.duration > 0 ? vid.duration : 0;
+        const cur = Number.isFinite(vid.currentTime) ? vid.currentTime : 0;
+        if (seekRange && !isSeeking && dur > 0) {
+          seekRange.value = String(Math.round((cur / dur) * 1000));
+        }
+        if (timeEl) {
+          timeEl.textContent = compactTime ? fmtTime(cur) : `${fmtTime(cur)} / ${fmtTime(dur)}`;
+        }
+        if (toggleBtn) {
           toggleBtn.textContent = vid.paused ? "PLAY" : "PAUSE";
-        };
+        }
+        syncSoundUI();
+      };
 
-        const togglePlay = () => {
-          if (vid.paused) {
-            const p = vid.play();
-            if (p && typeof p.catch === "function") p.catch(() => {});
-          } else {
-            vid.pause();
-          }
-          syncUI();
-        };
+      const togglePlay = () => {
+        if (vid.paused) {
+          const p = vid.play();
+          if (p && typeof p.catch === "function") p.catch(() => {});
+        } else {
+          vid.pause();
+        }
+        syncUI();
+      };
 
-        root.addEventListener("click", (e) => e.stopPropagation());
+      root.addEventListener("click", (e) => e.stopPropagation());
 
-        vid.addEventListener("click", (e) => {
-          e.stopPropagation();
-          togglePlay();
-        });
+      vid.addEventListener("click", (e) => {
+        e.stopPropagation();
+        togglePlay();
+      });
 
+      if (toggleBtn) {
         toggleBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           togglePlay();
         });
+      }
 
+      if (restartBtn) {
         restartBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           vid.currentTime = 0;
@@ -2848,7 +2992,9 @@
           if (p && typeof p.catch === "function") p.catch(() => {});
           syncUI();
         });
+      }
 
+      if (seekRange) {
         seekRange.addEventListener("pointerdown", (e) => {
           e.stopPropagation();
           isSeeking = true;
@@ -2860,7 +3006,9 @@
           if (dur > 0) {
             const nextTime = (Number(seekRange.value) / 1000) * dur;
             vid.currentTime = nextTime;
-            timeEl.textContent = `${fmtTime(nextTime)} / ${fmtTime(dur)}`;
+            if (timeEl) {
+              timeEl.textContent = compactTime ? fmtTime(nextTime) : `${fmtTime(nextTime)} / ${fmtTime(dur)}`;
+            }
           }
         });
 
@@ -2869,13 +3017,71 @@
         };
         seekRange.addEventListener("change", endSeek);
         seekRange.addEventListener("pointerup", endSeek);
+      }
 
-        vid.addEventListener("loadedmetadata", syncUI);
-        vid.addEventListener("timeupdate", syncUI);
-        vid.addEventListener("play", syncUI);
-        vid.addEventListener("pause", syncUI);
+      if (muteBtn) {
+        muteBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (vid.muted || vid.volume === 0) {
+            vid.muted = false;
+            vid.volume = lastVolume > 0 ? lastVolume : 0.8;
+          } else {
+            lastVolume = vid.volume > 0 ? vid.volume : lastVolume;
+            vid.muted = true;
+          }
+          syncSoundUI();
+        });
+      }
 
-        syncUI();
+      if (volRange) {
+        volRange.addEventListener("click", (e) => e.stopPropagation());
+        volRange.addEventListener("input", (e) => {
+          e.stopPropagation();
+          const v = Number(volRange.value);
+          if (v <= 0) {
+            vid.muted = true;
+          } else {
+            lastVolume = v;
+            vid.volume = v;
+            vid.muted = false;
+          }
+          syncSoundUI();
+        });
+      }
+
+      vid.addEventListener("loadedmetadata", syncUI);
+      vid.addEventListener("timeupdate", syncUI);
+      vid.addEventListener("play", syncUI);
+      vid.addEventListener("pause", syncUI);
+      vid.addEventListener("volumechange", syncSoundUI);
+
+      syncUI();
+    }
+
+    function bindInteractiveFrame(container, frame) {
+      if (!container || !frame) return;
+
+      if (frame.type === "playlist" && frame.playlist) {
+        const root = container.querySelector("[data-video-player]") || container;
+        const vid = root.querySelector("video");
+        const trackBadge = root.querySelector("[data-vp-track]");
+        if (vid) {
+          vid.style.transition = "opacity 0.35s ease";
+          bindSequentialPlaylist(vid, frame.playlist, (idx, _clip, total) => {
+            if (trackBadge) {
+              trackBadge.textContent = `${String(idx + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+            }
+          });
+          bindVideoHudControls(root, vid);
+        }
+        return;
+      }
+
+      if (frame.type === "video-player" || frame.type === "video" || /\.mp4($|\?)/i.test(frame.src || "")) {
+        const root = container.querySelector("[data-video-player]");
+        if (!root) return;
+        const vid = root.querySelector("video");
+        bindVideoHudControls(root, vid);
         return;
       }
 
@@ -3152,6 +3358,7 @@
       if (frame.type === "aesthetic-showcase") {
         const root = container.querySelector("[data-aesthetic-showcase]");
         if (!root) return;
+        const reelCol = root.querySelector(".aesthetic-reel-col");
         const vid = root.querySelector("video");
         const labelEl = root.querySelector("[data-reel-label]");
         const nextBtn = root.querySelector("[data-reel-next]");
@@ -3170,6 +3377,7 @@
         }
 
         if (vid && list.length > 0) {
+          bindVideoHudControls(reelCol || root, vid, { compactTime: true });
           vid.addEventListener("ended", () => playClip(clipIdx + 1));
           vid.play().catch(() => {});
         }
@@ -3327,7 +3535,13 @@
 
       stageSlidesMount.querySelectorAll(".stage-slide").forEach((slide) => {
         const sIdx = Number(slide.dataset.slideIdx);
-        slide.classList.toggle("active", sIdx === caseIdx);
+        const isActive = sIdx === caseIdx;
+        slide.classList.toggle("active", isActive);
+        if (!isActive) {
+          slide.querySelectorAll("video").forEach((v) => {
+            if (!v.muted) v.muted = true;
+          });
+        }
       });
 
       // Update active slide's subframe if switched
@@ -3403,6 +3617,9 @@
     function openDetailModal(projectId) {
       const p = SHOWROOM_DATA.find((x) => x.id === projectId);
       if (!p) return;
+      stageSlidesMount.querySelectorAll("video").forEach((v) => {
+        if (!v.muted) v.muted = true;
+      });
 
       modalHeaderMeta.innerHTML = `
         <span class="badge-glass-light">${p.index}</span>
@@ -3436,15 +3653,18 @@
           modalStage.innerHTML = `<iframe src="${m.src}" title="${p.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         } else if (m.type === "gallery" && m.items) {
           modalStage.innerHTML = renderWebGalleryHTML(m.items);
-        } else if (m.type === "scrubber" || m.type === "zoom" || m.type === "video-player" || m.type === "model-gallery" || m.type === "aesthetic-showcase") {
+        } else if (
+          m.type === "scrubber" ||
+          m.type === "zoom" ||
+          m.type === "video-player" ||
+          m.type === "playlist" ||
+          m.type === "video" ||
+          m.type === "model-gallery" ||
+          m.type === "aesthetic-showcase" ||
+          /\.mp4($|\?)/i.test(m.src || "")
+        ) {
           modalStage.innerHTML = renderFrameHTML(m, `${p.title} - ${m.label}`, p.artwork);
           bindInteractiveFrame(modalStage, m);
-        } else if (m.type === "playlist" && m.playlist) {
-          modalStage.innerHTML = `<video src="${m.playlist[0].src}" poster="${m.playlist[0].poster || ""}" controls autoplay muted playsinline style="transition:opacity 0.35s ease;"></video>`;
-          const vid = modalStage.querySelector("video");
-          bindSequentialPlaylist(vid, m.playlist);
-        } else if (m.type === "video") {
-          modalStage.innerHTML = `<video src="${m.src}" controls autoplay muted loop playsinline></video>`;
         } else {
           modalStage.innerHTML = mediaTagHTML(m.src, `${p.title} - ${m.label}`, p.artwork);
         }
