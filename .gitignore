@@ -1,12 +1,10 @@
 # Ignore all raw source folders and large original media in D:\Andy\포트폴리오
 *
 
-# Track only the production portfolio web files & GitHub Pages workflow
+# Track only the production portfolio web files
 !.gitignore
+!.nojekyll
 !index.html
 !assets/
 !assets/*/
 !assets/**
-!.github/
-!.github/*/
-!.github/**
