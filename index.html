@@ -2050,6 +2050,57 @@
       margin-top: 4px;
     }
 
+    /* Clean Hover Tooltip (Desktop Hover Only) */
+    [data-tooltip] {
+      position: relative;
+    }
+
+    @media (hover: hover) {
+      [data-tooltip]::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: 50%;
+        bottom: calc(100% + 9px);
+        transform: translateX(-50%) translateY(4px);
+        padding: 6px 11px;
+        border-radius: 9px;
+        background: rgba(17, 17, 17, 0.9);
+        color: #FFFFFF;
+        font-family: var(--font-body);
+        font-size: 0.72rem;
+        font-weight: 500;
+        line-height: 1.35;
+        white-space: nowrap;
+        pointer-events: none;
+        opacity: 0;
+        box-shadow: 0 8px 20px rgba(17, 17, 17, 0.2);
+        transition: opacity 0.2s ease, transform 0.22s var(--ease-expo);
+        z-index: 20;
+      }
+
+      [data-tooltip]::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: calc(100% + 4px);
+        transform: translateX(-50%) translateY(4px);
+        border: 5px solid transparent;
+        border-top-color: rgba(17, 17, 17, 0.9);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s ease, transform 0.22s var(--ease-expo);
+        z-index: 20;
+      }
+
+      [data-tooltip]:hover::after,
+      [data-tooltip]:focus-visible::after,
+      [data-tooltip]:hover::before,
+      [data-tooltip]:focus-visible::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
     .footer-meta {
       margin-top: 24px;
       display: flex;
@@ -2673,13 +2724,14 @@
                     <span class="contact-info-k">MOBILE</span>
                     <a href="tel:010-4389-1190" class="contact-info-v">010-4389-1190</a>
                   </div>
-                  <a href="tel:010-4389-1190" class="hud-mini-btn">CALL</a>
+                  <a href="tel:010-4389-1190" class="hud-mini-btn" data-tooltip="모바일 즉시 통화 · PC는 연동 앱 필요">CALL</a>
                 </div>
               </div>
 
               <a
                 href="mailto:sgstarceo@gmail.com?subject=%5B%ED%94%BC%EC%95%84%EB%AA%A8%EB%A6%AC%ED%94%84%ED%8C%85%5D%20%EB%A9%B4%EC%A0%91%20%EC%A0%9C%EC%95%88%20%EB%B0%8F%20%EB%AC%B8%EC%9D%98"
                 class="glass-btn-dark contact-cta-full"
+                data-tooltip="기본 메일 앱 실행 · 웹메일은 상단 COPY 이용"
               >
                 <span>메일로 면접 제안 보내기</span>
                 <span>↗</span>
