@@ -1930,7 +1930,7 @@
     .modal-panel {
       width: 100%;
       max-width: 980px;
-      max-height: 90vh;
+      max-height: 92vh;
       overflow-y: auto;
       border-radius: 24px;
       background: rgba(255, 255, 255, 0.95);
@@ -1958,11 +1958,12 @@
       border-bottom: 1px solid var(--hairline);
     }
 
-    .modal-stage-wrap { padding: 18px 24px 0; }
+    .modal-stage-wrap { padding: 14px 24px 0; }
 
     .modal-stage {
       width: 100%;
       aspect-ratio: 16 / 9;
+      max-height: 48vh;
       border-radius: 16px;
       background: var(--surface-warm);
       overflow: hidden;
@@ -1991,10 +1992,10 @@
     }
 
     .modal-body {
-      padding: 26px 28px 34px;
+      padding: 18px 26px 24px;
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.85fr);
-      gap: 28px;
+      gap: 24px;
     }
 
     .clean-list {
@@ -3775,17 +3776,10 @@
       modalCopy.textContent = p.summary;
       modalBullets.innerHTML = p.bullets.map((b) => `<li>${b}</li>`).join("");
 
-      const linksHtml = p.links.length
-        ? `<div style="display:flex; flex-direction:column; gap:8px; padding-top:8px; border-top:1px solid var(--hairline);">
-            ${p.links.map((l) => `<a class="glass-btn-dark" style="width:100%; font-size:0.78rem;" href="${l.url}" target="_blank" rel="noopener noreferrer">${l.label} ↗</a>`).join("")}
-          </div>`
-        : "";
-
       modalMeta.innerHTML = `
         ${p.conceptBadge ? `<div><div class="spec-k">STATUS</div><div class="spec-v">${p.conceptBadge}</div></div>` : ""}
         <div><div class="spec-k">ROLE</div><div class="spec-v">${p.role}</div></div>
         <div><div class="spec-k">STACK</div><div class="tag-row">${p.tools.map((t) => `<span class="tag-chip">${t}</span>`).join("")}</div></div>
-        ${linksHtml}
       `;
 
       detailModal.classList.add("open");
