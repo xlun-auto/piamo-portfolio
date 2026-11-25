@@ -1259,29 +1259,80 @@
       z-index: 4;
       display: flex;
       align-items: center;
-      gap: 7px;
-      padding: 6px 11px;
+      gap: 8px;
+      padding: 7px 13px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow: 0 6px 18px rgba(17, 17, 17, 0.16);
     }
 
     .modeling-dot {
-      width: 7px;
-      height: 7px;
+      width: 9px;
+      height: 9px;
       border-radius: 999px;
-      background: rgba(17, 17, 17, 0.25);
+      background: rgba(17, 17, 17, 0.28);
       border: none;
       padding: 0;
       cursor: pointer;
-      transition: width 0.3s var(--ease-expo), background-color 0.25s ease;
+      transition: width 0.3s var(--ease-expo), background-color 0.25s ease, transform 0.2s ease;
+    }
+
+    .modeling-dot:hover {
+      background: rgba(30, 58, 52, 0.65);
+      transform: scale(1.15);
     }
 
     .modeling-dot.active {
-      width: 20px;
+      width: 22px;
       background: #1E3A34;
+    }
+
+    .modeling-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 4;
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #111111;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow: 0 6px 18px rgba(17, 17, 17, 0.18);
+      cursor: pointer;
+      transition: transform 0.25s var(--ease-expo), background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .modeling-nav-btn:hover {
+      background: var(--grad-signature);
+      transform: translateY(-50%) scale(1.06);
+      box-shadow: 0 8px 22px rgba(134, 227, 206, 0.34);
+    }
+
+    .modeling-nav-btn:active {
+      transform: translateY(-50%) scale(0.96);
+    }
+
+    .modeling-nav-btn.prev {
+      left: 14px;
+    }
+
+    .modeling-nav-btn.next {
+      right: 14px;
+    }
+
+    .modeling-nav-btn svg {
+      width: 18px;
+      height: 18px;
+      display: block;
     }
 
     /* Case 04: Aesthetic Branded Video + Vertical Auto-Scrolling Thumbnail Reel */
@@ -2813,18 +2864,24 @@
             ${items
               .map(
                 (m, idx) => `
-                <div class="modeling-slide" data-model-src="${m.src}" data-model-idx="${idx}">
-                  <img src="${m.src}" alt="3D Modeling ${idx + 1}" />
+                <div class="modeling-slide" data-model-src="${m.src}" data-model-label="${m.label || `이미지 ${idx + 1}`}" data-model-idx="${idx}">
+                  <img src="${m.src}" alt="${m.label || `Slide ${idx + 1}`}" />
                 </div>
               `
               )
               .join("")}
           </div>
+          <button type="button" class="modeling-nav-btn prev" data-carousel-prev data-hud="true" aria-label="이전 이미지">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button type="button" class="modeling-nav-btn next" data-carousel-next data-hud="true" aria-label="다음 이미지">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
           <div class="modeling-dots" data-hud="true">
             ${items
               .map(
-                (_, idx) =>
-                  `<button type="button" class="modeling-dot ${idx === 0 ? "active" : ""}" data-dot-idx="${idx}" aria-label="슬라이드 ${idx + 1}"></button>`
+                (m, idx) =>
+                  `<button type="button" class="modeling-dot ${idx === 0 ? "active" : ""}" data-dot-idx="${idx}" title="${m.label || `슬라이드 ${idx + 1}`}" aria-label="${m.label || `슬라이드 ${idx + 1}`}"></button>`
               )
               .join("")}
           </div>
@@ -3312,11 +3369,14 @@
         const track = root.querySelector(".modeling-track");
         const dots = Array.from(root.querySelectorAll(".modeling-dot"));
         const slides = Array.from(root.querySelectorAll(".modeling-slide"));
+        const prevBtn = root.querySelector("[data-carousel-prev]");
+        const nextBtn = root.querySelector("[data-carousel-next]");
         const total = slides.length;
         if (total === 0) return;
 
         let idx = 0;
         let paused = false;
+        let timer = null;
 
         function goTo(nextIdx) {
           idx = ((nextIdx % total) + total) % total;
@@ -3324,29 +3384,51 @@
           dots.forEach((d, i) => d.classList.toggle("active", i === idx));
         }
 
-        const timer = setInterval(() => {
-          if (!root.isConnected) {
-            clearInterval(timer);
-            return;
-          }
-          if (!paused) goTo(idx + 1);
-        }, 2600);
+        function resetAutoTimer() {
+          if (timer) clearInterval(timer);
+          timer = setInterval(() => {
+            if (!root.isConnected) {
+              clearInterval(timer);
+              return;
+            }
+            if (!paused) goTo(idx + 1);
+          }, 2800);
+        }
+
+        resetAutoTimer();
 
         root.addEventListener("mouseenter", () => { paused = true; });
         root.addEventListener("mouseleave", () => { paused = false; });
         root.addEventListener("click", (e) => e.stopPropagation());
 
+        if (prevBtn) {
+          prevBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            goTo(idx - 1);
+            resetAutoTimer();
+          });
+        }
+
+        if (nextBtn) {
+          nextBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            goTo(idx + 1);
+            resetAutoTimer();
+          });
+        }
+
         dots.forEach((dot) => {
           dot.addEventListener("click", (e) => {
             e.stopPropagation();
             goTo(Number(dot.dataset.dotIdx));
+            resetAutoTimer();
           });
         });
 
         slides.forEach((slide) => {
           slide.addEventListener("click", (e) => {
             e.stopPropagation();
-            openZoomImageModal("3D 모델링 아카이브", slide.dataset.modelSrc);
+            openZoomImageModal(slide.dataset.modelLabel || frame.label || "이미지 아카이브", slide.dataset.modelSrc);
           });
         });
 
