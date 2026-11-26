@@ -2610,7 +2610,13 @@
                   <path d="m13 5 7 7-7 7"></path>
                 </svg>
               </a>
-              <button type="button" class="glass-btn-pastel" data-copy-email="sgstarceo@gmail.com">
+              <button type="button" class="glass-btn-pastel" data-open-showreel>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <polygon points="6 4 20 12 6 20 6 4"></polygon>
+                </svg>
+                <span>WATCH SHOWREEL</span>
+              </button>
+              <button type="button" class="glass-btn-light" data-copy-email="sgstarceo@gmail.com">
                 <span>COPY EMAIL</span>
               </button>
             </div>
@@ -2648,9 +2654,17 @@
               <h2 class="section-title" id="showroom-heading" style="margin-bottom:0; font-size:clamp(1.65rem, 2.7vw, 2.35rem);">INTERACTIVE SHOWCASE</h2>
             </div>
 
-            <div class="showroom-guide-pill" aria-label="쇼케이스 전환 안내">
-              <span class="showroom-guide-dot" aria-hidden="true"></span>
-              <span>총 4개 챕터 · 아래 탭 또는 다음 버튼으로 전환해 보세요</span>
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+              <div class="showroom-guide-pill" aria-label="쇼케이스 전환 안내">
+                <span class="showroom-guide-dot" aria-hidden="true"></span>
+                <span>총 4개 챕터 · 아래 탭 또는 다음 버튼으로 전환해 보세요</span>
+              </div>
+              <button type="button" class="glass-btn-pastel" style="padding:8px 15px; font-size:0.75rem;" data-open-showreel>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <polygon points="6 4 20 12 6 20 6 4"></polygon>
+                </svg>
+                <span>SHOWREEL</span>
+              </button>
             </div>
           </div>
 
@@ -4161,6 +4175,51 @@
       document.body.classList.remove("modal-open");
       modalStage.innerHTML = "";
     }
+
+    function openShowReelModal() {
+      // Pause/mute background videos so audio never overlaps
+      if (heroBgVideo && !heroBgVideo.paused) heroBgVideo.pause();
+      stageSlidesMount.querySelectorAll("video").forEach((v) => {
+        if (!v.muted) v.muted = true;
+        if (!v.paused) v.pause();
+      });
+
+      modalHeaderMeta.innerHTML = `<span class="badge-glass-light">SHOWREEL 2027 · 3D · MOTION · AI VIDEO</span>`;
+      modalTabs.style.display = "none";
+      modalTabs.innerHTML = "";
+
+      const frame = {
+        type: "video-player",
+        src: "./assets/showreel_2027.mp4",
+        poster: "./assets/showreel_piamo_thumb.jpg",
+        label: "2027 MKD ShowReel V3.0"
+      };
+      modalStage.innerHTML = renderVideoPlayerHTML(frame);
+      bindInteractiveFrame(modalStage, frame);
+
+      modalTitle.textContent = "2027 ShowReel V3.0 — 대표 영상 하이라이트";
+      modalCopy.textContent = "3D 시각화, 모션그래픽, AI 영상 파이프라인 및 브랜디드 콘텐츠 핵심 작업물을 한 편으로 압축한 대표 쇼릴입니다.";
+      modalBullets.innerHTML = `
+        <li>3ds Max 기반 제품·메커니즘·공간 3D 시각화 및 애니메이션 연출</li>
+        <li>After Effects·Premiere Pro 모션그래픽과 생성형 AI 영상 파이프라인 결합</li>
+        <li>하단 플레이 바에서 구간 탐색 및 사운드·볼륨 조절 가능 (기본 음소거)</li>
+      `;
+      modalMeta.innerHTML = `
+        <div><div class="spec-k">VERSION</div><div class="spec-v">2027 ShowReel V3.0</div></div>
+        <div><div class="spec-k">CONTROLS</div><div class="spec-v">재생/일시정지 · 처음부터 · 탐색 · 사운드</div></div>
+      `;
+
+      detailModal.classList.add("open");
+      detailModal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+    }
+
+    document.querySelectorAll("[data-open-showreel]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        openShowReelModal();
+      });
+    });
 
     function openZoomImageModal(label, src) {
       modalHeaderMeta.innerHTML = `<span class="badge-glass-light">3D MODELING ARCHIVE · ZOOM VIEW</span>`;
