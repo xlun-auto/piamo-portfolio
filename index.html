@@ -3012,20 +3012,29 @@
       const loadClip = (nextIdx, autoPlay = true) => {
         idx = (nextIdx + playlist.length) % playlist.length;
         const clip = playlist[idx];
-        videoEl.style.opacity = "0.35";
+        videoEl.style.opacity = "0";
+        // Clear poster on clip transition so a 1-frame static JPG never flashes between videos
+        videoEl.removeAttribute("poster");
         videoEl.src = clip.src;
-        if (clip.poster) videoEl.poster = clip.poster;
         videoEl.load();
         if (onTrackChange) onTrackChange(idx, clip, playlist.length);
+
+        const reveal = () => {
+          videoEl.removeEventListener("loadeddata", reveal);
+          videoEl.removeEventListener("playing", reveal);
+          requestAnimationFrame(() => {
+            videoEl.style.opacity = "1";
+          });
+        };
+        videoEl.addEventListener("loadeddata", reveal, { once: true });
+        videoEl.addEventListener("playing", reveal, { once: true });
+
         if (autoPlay) {
           const playPromise = videoEl.play();
           if (playPromise && typeof playPromise.catch === "function") {
             playPromise.catch(() => {});
           }
         }
-        requestAnimationFrame(() => {
-          videoEl.style.opacity = "1";
-        });
       };
 
       videoEl.removeAttribute("loop");
