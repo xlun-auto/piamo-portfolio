@@ -870,19 +870,208 @@
       flex-wrap: wrap;
       align-items: flex-end;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
+    }
+
+    .showroom-guide-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 15px;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #1E3A34;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(134, 227, 206, 0.55);
+      box-shadow: 0 6px 18px rgba(17, 17, 17, 0.05);
+    }
+
+    .showroom-guide-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22C59E;
+      box-shadow: 0 0 0 0 rgba(34, 197, 158, 0.55);
+      animation: chapterPulse 2.2s ease-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes chapterPulse {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 158, 0.55); }
+      70% { box-shadow: 0 0 0 8px rgba(34, 197, 158, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 158, 0); }
     }
 
     .showroom-quick-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
     }
 
-    .showroom-quick-tabs .glass-pill-tab {
-      padding: 9px 17px;
-      font-size: 0.78rem;
+    .chapter-tab-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+      padding: 14px 16px 15px;
+      border-radius: 16px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(18px) saturate(165%);
+      -webkit-backdrop-filter: blur(18px) saturate(165%);
+      border: 1px solid rgba(17, 17, 17, 0.12);
+      box-shadow: 0 6px 18px rgba(17, 17, 17, 0.04);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.28s var(--ease-expo), background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.3s ease;
+    }
+
+    .chapter-tab-card::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      background: var(--grad-signature);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.35s var(--ease-expo);
+    }
+
+    .chapter-tab-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.96);
+      border-color: rgba(134, 227, 206, 0.85);
+      box-shadow: 0 12px 28px rgba(17, 17, 17, 0.08);
+    }
+
+    .chapter-tab-card.active {
+      background: #14161A;
+      border-color: rgba(134, 227, 206, 0.65);
+      box-shadow: 0 14px 32px rgba(17, 17, 17, 0.18);
+      transform: translateY(-1px);
+    }
+
+    .chapter-tab-card.active::after {
+      transform: scaleX(1);
+    }
+
+    .chapter-tab-meta {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--ink-muted);
+    }
+
+    .chapter-tab-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(17, 17, 17, 0.06);
+      color: var(--ink);
+    }
+
+    .chapter-tab-card.active .chapter-tab-meta {
+      color: rgba(255, 255, 255, 0.68);
+    }
+
+    .chapter-tab-card.active .chapter-tab-num {
+      background: var(--grad-signature);
+      color: #111111;
+    }
+
+    .chapter-tab-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+
+    .chapter-tab-card.active .chapter-tab-title {
+      color: #FFFFFF;
+    }
+
+    .stage-chapter-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .stage-chapter-counter {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #1E3A34;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(134, 227, 206, 0.22);
+      border: 1px solid rgba(134, 227, 206, 0.55);
+      white-space: nowrap;
+    }
+
+    .stage-chapter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 13px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #111111;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(17, 17, 17, 0.14);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stage-chapter-btn:hover {
+      background: #14161A;
+      color: #FFFFFF;
+      border-color: #14161A;
+      transform: translateY(-1px);
+    }
+
+    .stage-chapter-btn.primary {
+      background: #14161A;
+      color: #FFFFFF;
+      border-color: #14161A;
+    }
+
+    .stage-chapter-btn.primary:hover {
+      background: var(--grad-signature);
+      color: #111111;
+      border-color: rgba(134, 227, 206, 0.8);
+    }
+
+    @media (max-width: 860px) {
+      .showroom-quick-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .stage-chapter-nav {
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 6px;
+        border-top: 1px solid var(--hairline);
+      }
     }
 
     .showroom-grid {
@@ -2459,8 +2648,13 @@
               <h2 class="section-title" id="showroom-heading" style="margin-bottom:0; font-size:clamp(1.65rem, 2.7vw, 2.35rem);">INTERACTIVE SHOWCASE</h2>
             </div>
 
-            <div class="showroom-quick-tabs" id="showroomTabs" role="tablist" aria-label="Showroom Quick Switch"></div>
+            <div class="showroom-guide-pill" aria-label="쇼케이스 전환 안내">
+              <span class="showroom-guide-dot" aria-hidden="true"></span>
+              <span>총 4개 챕터 · 아래 탭 또는 다음 버튼으로 전환해 보세요</span>
+            </div>
           </div>
+
+          <div class="showroom-quick-tabs stagger-item" id="showroomTabs" role="tablist" aria-label="Showroom Chapter Switch"></div>
 
           <div class="showroom-grid">
             <!-- Full-Wide Cinema Preview Stage -->
@@ -2474,6 +2668,11 @@
 
               <div class="stage-toolbar">
                 <div class="stage-subframes" id="stageSubframes"></div>
+                <div class="stage-chapter-nav" aria-label="챕터 이전/다음 이동">
+                  <button type="button" class="stage-chapter-btn" id="stagePrevCaseBtn">← 이전</button>
+                  <span class="stage-chapter-counter" id="stageCaseCounter">01 / 04</span>
+                  <button type="button" class="stage-chapter-btn primary" id="stageNextCaseBtn">다음 챕터 →</button>
+                </div>
               </div>
 
               <div class="stage-caption">
@@ -2829,6 +3028,7 @@
       {
         id: "lifting-concept",
         shortTab: "01 LIFTING",
+        chapterLabel: "메디컬·리프팅 3D·AI",
         index: "CASE 01 · 3D / AI",
         conceptBadge: "VIRTUAL CONCEPT / 가상 컨셉 시안",
         title: "메디컬·리프팅 3D·AI 비주얼 시안",
@@ -2855,6 +3055,7 @@
       {
         id: "corporate-web",
         shortTab: "02 WEB",
+        chapterLabel: "기업·브랜드 웹사이트",
         index: "CASE 02 · WEB BUILD & UPGRADE",
         conceptBadge: null,
         title: "기업·브랜드 웹사이트 구축·리뉴얼 및 운영",
@@ -2903,6 +3104,7 @@
       {
         id: "skid-3d",
         shortTab: "03 3D & MODELING",
+        chapterLabel: "산업·제품 3D 시각화",
         index: "CASE 03 · 3D VISUALIZATION & MODELING",
         conceptBadge: null,
         title: "산업·제품 3D 시각화 및 메커니즘 시뮬레이션",
@@ -2964,6 +3166,7 @@
       {
         id: "aesthetic-video",
         shortTab: "04 AESTHETIC",
+        chapterLabel: "에스테틱 브랜디드 영상",
         index: "CASE 04 · AESTHETIC BRANDED VIDEO",
         conceptBadge: null,
         title: "에스테틱·현장 브랜디드 영상",
@@ -3797,18 +4000,27 @@
     const stageBullets = document.getElementById("stageBullets");
     const stageTools = document.getElementById("stageTools");
     const stageExtLinks = document.getElementById("stageExtLinks");
+    const stagePrevCaseBtn = document.getElementById("stagePrevCaseBtn");
+    const stageNextCaseBtn = document.getElementById("stageNextCaseBtn");
+    const stageCaseCounter = document.getElementById("stageCaseCounter");
 
     let activeCaseIdx = 0;
     const selectedFramePerCase = SHOWROOM_DATA.map(() => 0);
 
     function buildShowroomUI() {
-      showroomTabsEl.innerHTML = SHOWROOM_DATA.map(
-        (item, idx) => `
-          <button type="button" class="glass-pill-tab ${idx === 0 ? "active" : ""}" data-tab-idx="${idx}" role="tab" aria-selected="${idx === 0 ? "true" : "false"}">
-            ${item.shortTab}
+      showroomTabsEl.innerHTML = SHOWROOM_DATA.map((item, idx) => {
+        const num = String(idx + 1).padStart(2, "0");
+        const engTag = item.shortTab.replace(/^\d+\s*/, "");
+        return `
+          <button type="button" class="chapter-tab-card ${idx === 0 ? "active" : ""}" data-tab-idx="${idx}" role="tab" aria-selected="${idx === 0 ? "true" : "false"}">
+            <span class="chapter-tab-meta">
+              <span class="chapter-tab-num">${num}</span>
+              <span>${engTag}</span>
+            </span>
+            <span class="chapter-tab-title">${item.chapterLabel || item.title}</span>
           </button>
-        `
-      ).join("");
+        `;
+      }).join("");
 
       // Lazy-mount slides: only mount slide 0 on initial load; slides 1..3 mount on first visit
       stageSlidesMount.innerHTML = SHOWROOM_DATA.map(
@@ -3821,6 +4033,19 @@
           selectShowroomCase(idx, selectedFramePerCase[idx]);
         });
       });
+
+      if (stagePrevCaseBtn) {
+        stagePrevCaseBtn.addEventListener("click", () => {
+          const prevIdx = (activeCaseIdx - 1 + SHOWROOM_DATA.length) % SHOWROOM_DATA.length;
+          selectShowroomCase(prevIdx, selectedFramePerCase[prevIdx]);
+        });
+      }
+      if (stageNextCaseBtn) {
+        stageNextCaseBtn.addEventListener("click", () => {
+          const nextIdx = (activeCaseIdx + 1) % SHOWROOM_DATA.length;
+          selectShowroomCase(nextIdx, selectedFramePerCase[nextIdx]);
+        });
+      }
 
       selectShowroomCase(0, 0);
     }
@@ -3835,6 +4060,15 @@
         b.classList.toggle("active", isAct);
         b.setAttribute("aria-selected", String(isAct));
       });
+
+      const totalCases = SHOWROOM_DATA.length;
+      if (stageCaseCounter) {
+        stageCaseCounter.textContent = `${String(caseIdx + 1).padStart(2, "0")} / ${String(totalCases).padStart(2, "0")}`;
+      }
+      if (stageNextCaseBtn) {
+        const nextItem = SHOWROOM_DATA[(caseIdx + 1) % totalCases];
+        stageNextCaseBtn.textContent = `다음: ${nextItem.chapterLabel || nextItem.shortTab} →`;
+      }
 
       // Mount or switch active slide's subframe before play/pause sync
       const activeSlide = stageSlidesMount.querySelector(`.stage-slide[data-slide-idx="${caseIdx}"]`);
